@@ -1,0 +1,28 @@
+version: '3.1'
+services:
+    transacoes:
+        build:
+            context: .
+        restart: always
+        ports:
+            - 5000:5000
+        environment: 
+            ASPNETCORE_ENVIRONMENT: Development
+        networks:
+            - transacoes
+    portainer:
+        image: portainer/portainer
+        command: -H unix:///var/run/docker.sock
+        restart: always
+        ports:
+            - 9000:9000
+        volumes:
+            - /var/run/docker.sock:/var/run/docker.sock
+            - portainer_data:/data
+
+volumes:
+  portainer_data:
+            
+networks:
+    transacoes:
+        driver: bridge
