@@ -1,0 +1,40 @@
+apiVersion : apps/v1
+kind: Deployment
+metadata:
+  name: deployment-apihandson
+  labels:
+    app.project.name: apihandson
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: apihandson
+  template:
+    metadata:
+      labels:
+        app: apihandson 
+    spec:
+      containers:
+        - name: apihandson 
+          image: cesarag92/handson-k8s
+          ports:
+            - containerPort: 5000
+          env:
+            - name: "ASPNETCORE_ENVIRONMENT"
+              valueFrom:
+                secretKeyRef:
+                  name: secret-handson
+                  key: ambiente
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "50m"
+            limits:
+              memory: "128Mi"
+              cpu: "100m"
+          envFrom:
+            - configMapRef:
+                name: handson-configmap
+                optional: true 
+      imagePullSecrets:
+        - name: dockerhub    

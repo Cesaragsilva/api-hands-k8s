@@ -1,0 +1,48 @@
+apiVersion : apps/v1
+kind: Deployment
+metadata:
+  namespace: lab
+  name: deployment-rabbitmq
+  labels:
+    app.project.name: rabbitmq
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rabbitmq
+  template:
+    metadata:
+      labels:
+        app: rabbitmq 
+    spec:
+      containers:
+        - name: rabbitmq 
+          image: rabbitmq:management
+          ports:
+            - containerPort: 15672
+            - containerPort: 5672
+      imagePullSecrets:
+        - name: dockerhub-secret
+---
+apiVersion: v1
+kind: Service
+metadata:
+    namespace: lab
+    name: service-rabbitmq
+    labels:
+      app.project.name: rabbitmq
+spec:
+    type: NodePort
+    ports:
+    - name: http
+      nodePort: 31672
+      port: 15672
+      protocol: TCP
+      targetPort: 15672
+    - name: amqp
+      nodePort: 31673
+      port: 5672
+      protocol: TCP
+      targetPort: 5672
+    selector:
+        app: rabbitmq       

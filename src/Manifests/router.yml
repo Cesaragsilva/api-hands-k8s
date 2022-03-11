@@ -1,0 +1,25 @@
+kind: Route
+apiVersion: route.openshift.io/v1
+metadata:
+  name: router-apihandson
+  labels:
+    app.project.name: apihandson
+spec:
+  host: apihandsk8s.apps.sandbox-m2.ll9k.p1.openshiftapps.com
+  to:
+    kind: Service
+    name: service-apihandson
+    weight: 100
+  port:
+    targetPort: 5000
+  wildcardPolicy: None
+status:
+  ingress:
+    - host: >-
+        apihandsk8s.apps.sandbox-m2.ll9k.p1.openshiftapps.com
+      routerName: default
+      conditions:
+        - type: Admitted
+          status: 'True'
+      wildcardPolicy: None
+      routerCanonicalHostname: router-default.apps.sandbox-m2.ll9k.p1.openshiftapps.com

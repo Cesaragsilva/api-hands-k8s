@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+    name: service-apihandson-minikube
+    labels:
+      app.project.name: apihandson
+spec:
+  type: NodePort
+  ports:
+    - nodePort: 31317
+      port: 5000
+      protocol: TCP
+      targetPort: 5000
+  selector:
+    app: apihandson
+
+    #expor no minikube https://kubernetes.io/docs/tasks/access-application-cluster/ingress-minikube/

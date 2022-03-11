@@ -1,0 +1,87 @@
+#https://github.com/kedacore/sample-go-rabbitmq
+---
+#Deploy do consumidor do rabbitmq
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rabbitmq-consumer
+  namespace: lab 
+  labels:
+    app: rabbitmq-consumer
+spec:
+  selector:
+    matchLabels:
+      app: rabbitmq-consumer
+  template:
+    metadata:
+      labels:
+        app: rabbitmq-consumer
+    spec:
+      containers:
+        - name: rabbitmq-consumer
+          image: jeffhollan/rabbitmq-client:dev
+          imagePullPolicy: Always
+          command:
+            - receive
+          args:
+            - "amqp://guest:guest@54.82.105.102:31673"
+      imagePullSecrets:
+        - name: dockerhub-secret
+---
+#Job de carga de mensagens 300 mensagens são publicadas
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: rabbitmq-publish2
+  namespace: lab 
+spec:
+  template:
+    spec:
+      containers:
+      - name: rabbitmq-client
+        image: jeffhollan/rabbitmq-client:dev
+        imagePullPolicy: Always
+        command: ["send",  "amqp://guest:guest@54.82.105.102:31673", "300"]
+      restartPolicy: Never
+  backoffLimit: 4
+---
+#Objeto do Keda responsavel por escalar os containers definidos no scaleTargetRef
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: rabbitmq-consumer
+  namespace: lab 
+spec:
+  scaleTargetRef:
+    name: rabbitmq-consumer
+  pollingInterval: 5 # Optional. Default: 30 seconds
+  cooldownPeriod: 30 # Optional. Default: 300 seconds
+  maxReplicaCount: 10 # Optional. Default: 100
+  triggers:
+    - type: rabbitmq
+      metadata:
+        queueName: hello
+        queueLength: "5"
+      authenticationRef:
+        name: rabbitmq-consumer-trigger
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: rabbitmq-consumer-secret
+  namespace: lab 
+data:
+  RabbitMqHost: YW1xcDovL2d1ZXN0Omd1ZXN0QDU0LjgyLjEwNS4xMDI6MzE2NzM=
+---
+#Autenticacao do Keda para conseguir monitorar a fila
+apiVersion: keda.sh/v1alpha1
+kind: TriggerAuthentication
+metadata:
+  name: rabbitmq-consumer-trigger
+  namespace: lab 
+spec:
+  secretTargetRef:
+    - parameter: host
+      name: rabbitmq-consumer-secret
+      key: RabbitMqHost
+---

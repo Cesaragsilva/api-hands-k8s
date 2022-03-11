@@ -1,0 +1,21 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: cronjob-k8s
+  app.projectname: cronjob-k8s
+spec:
+  schedule: "*/1 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: cronjob-hands-k8s
+              image: busybox
+              args:
+                - /bin/sh
+                - '-c'
+                - date; echo CronJob executado com sucesso!
+          imagePullSecrets:
+            - name: dockerhub
+          restartPolicy: OnFailure
