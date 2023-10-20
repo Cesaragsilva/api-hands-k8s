@@ -1,0 +1,175 @@
+******************** DOCKER CONTAINERS **************************
+
+docker version - exibe a versão do docker.
+docker run NOME_DA_IMAGEM - cria um container com a respectiva imagem passada como parâmetro.
+docker run -d - Executa o processo em background
+docker run -d -P NOME_DA_IMAGEM - Executa o processo em background e libera Portas externas aleatorias do Container(Para acessar no computador local)
+docker run -d -P -name "NOMEContainer" NOME_DA_IMAGEM Executa o processo em background e libera Portas externas aleatorias do Container(Para acessar no computador local) atribuindo o nome do container
+docker run -d -p 12345(Porta) -name "NOMEContainer" NOME_DA_IMAGEM Executa o processo em background e libera a Porta 12345 do Container(Para acessar no computador local) atribuindo o nome do container
+docker run -d -p 12345(Porta) -e AUTHOR="Douglas Q" -name "NOMEContainer" NOME_DA_IMAGEM Executa o processo em background e libera a Porta 12345 do Container(Para acessar no computador local) atribuindo uma varivel de ambiente chamada AUTHOR com o valor DOUGLAS Q e o nome do container
+docker port IDCONTAINER - Mosta o mapeamento das portas do Container
+docker ps - Exibe o Conteiner Ativos
+docker container ls - Exibe o Conteiner Ativos
+docker ps -a - Exibe os conteiners Ativos e Inativos
+docker run -it NOMFE_DA_IMAGE - Permite trabalhar dentro do Container
+exit - Permite Sair de "Dentro" Conteiner
+docker start -a -i ID_CONTEINER - Start no Container e já atacha o terminal do conteiner startado
+docker stop IDCONTAINER - Para o Container em 10 segundos (Default)
+docker stop -t 0 IDCONTAINER - Para o container em X tempo (0 é o tempo em segundos)
+docker rm idconteiner -Deleta conteiner 
+docker rmi IdImagem - Deleta a imagem
+docker container prune - Limpa todos os Containers Inativos
+docker run -v "CAMINHO_VOLUME" NOME_DA_IMAGEM - cria um volume no respectivo caminho do container.
+docker inspect ID_CONTAINER - retorna diversas informações sobre o container.
+hostname -i - mostra o ip atribuído ao container pelo docker (funciona apenas dentro do container).
+docker run -it --name NOME_CONTAINER --network NOME_DA_REDE NOME_IMAGEM - cria um container especificando seu nome e qual rede deverá ser usada.
+docker run -d -p 6379:6379 --name redis_alpine --restart always redis:5.0.3-alpine - Inicia o container automaticamente quando o docker for reiniciado
+docker exec -i -t nginx-container /bin/bash - Acessa o terminal de um container que já está rodando.. docker exec -i -t "ID ou nome do container"
+docker rm $(docker ps -a -q) - remove todos os containers inativos
+docker rmi $(docker images ps -a -q) - remove todas as imagens inativas
+docker stats - Monitoramento de consumo do docker em tempo real
+docker run --rm -d nginx - Irá executar um container do NGINX, porém, quando ele parar, ele será excluído totalmente (--rm)
+docker logs - Permite visualizar os logs da applicaçao que estão sendo enviados no stdout
+
+******************** DOCKER NETWORK **************************
+
+docker network create --driver bridge NOME_DA_REDE - cria uma rede especificando o driver desejado.
+docker network ls - Lista todas as redes criadas no docker
+docker network connect NOME_REDE NOME_CONTAINER - Conecta o Container passado como parametro na rede informada.
+docker network rm NOME_REDE - Remove uma Rede em específico
+docker network prune - Remove todas as redes não utilizadas
+docker network inspect NOME_REDE - Permite visualizar as configurações da rede em específico
+
+******************** DOCKER VOLUMES **************************
+
+docker volume create NOME_VOLUME - Cria um Volume
+docker volume inspect NOME_VOLUME - Exibe as configurações do volume e onde serão salvos os arquivos do volume
+docker volume ls - Exibe os volumes existentes
+
+docker run --name nginx -d -p 8080:80 -v - Cria um mapemanto no computador, porém é um comando antigo 
+docker run --name nginx -d -p 8080:80 -mount type=bind,source=path_maquina,target=path_container - Comando novo para o docker
+docker volume prune - Mapa os volumes não utilizados
+
+
+EXEMPLOS:
+
+docker run --name nginx -d -p 8080:80 -v ./PASTA_MEU_COMPUTADOR:PASTA_MEPAMENTO_CONTAINER (./nginx:/usr/share/nginx/html)
+docker run --name nginx -d -p 8080:80 -mount type=bind,source=./nginx,target=/usr/share/nginx/html
+docker run --name nginx -d -p 8080:80 -mount type=VOLUME,source=NOME_VOLUME_CRIADO_ANTES,target=/usr/share/nginx/html (DESTA FORMA, PODEMOS COMPARTILHAR O VOLUME ENTRE CONTAINERS)
+docker run --name nginx -d -p 8080:80 -v NOME_VOLUME_CRIADO_ANTES:/usr/share/nginx/html
+
+********************** DOCKER IMAGES *************************
+
+docker build -t nodeappprod . -f Dockerfile.prod - Permite criar uma imagem a partir de um docker file com um nome diferente de Dockerfile. (-f nome do arquivo)
+docker build -f Dockerfile - cria uma imagem a partir de um Dockerfile.
+docker build -f CAMINHO_DOCKERFILE/Dockerfile -t NOME_USUARIO/NOME_IMAGEM - constrói e nomeia uma imagem não-oficial informando o caminho para o Dockerfile.
+docker login - inicia o processo de login no Docker Hub.
+docker push NOME_USUARIO/NOME_IMAGEM - envia a imagem criada para o Docker Hub.
+docker pull NOME_USUARIO/NOME_IMAGEM - baixa a imagem desejada do Docker Hub.
+
+FROM node:latest -IMAGEM E VERSAO
+MAINTAINER Ubuntu - CRIADOR DA IMAGEM
+COPY . /var/www - COPIAR OS ARQUIVOS DA PASTA LOCAL(.) PARA A PASTA DO CONTAINER /VAR/WWW
+WORKDIR /var/www - COLOCAR O CONTAINER PARA INICIAR JÁ NA PASTA /VAR/WWW
+RUN npm install - RODA O COMANDO DENTRO DO CONTAINER
+ENTRYPOINT npm start - COMANDO A SER EXECUTADO QUANDO O CONTAINER FOR INICIADO
+EXPOSE 3000 - EXPOE A PORTA DA APLICACAO DENTRO DA IMAGEM
+
+********************** Docker Compose ********************** 
+
+O Docker Compose não é instalado por padrão no Linux, então você deve instalá-lo por fora. Para tal, baixe-o na sua versão mais atual, que pode ser visualizada no seu GitHub, executando o comando abaixo:
+
+sudo curl -L https://github.com/docker/compose/releases/download/1.15.0/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
+Após isso, dê permissão de execução para o docker-compose:
+
+sudo chmod +x /usr/local/bin/docker-compose
+Pronto, o Docker Compose já está instalado no seu Linux!
+
+Configurar o build de vários containers através do docker-compose.yml
+subir e parar os containers de maneira coordenada com Docker Compose
+Segue também uma breve lista dos novos comandos utilizados:
+
+docker-compose up - sobe os serviços criados
+docker-compose down - para os serviços criados.
+docker-compose ps - lista os serviços que estão rodando.
+docker-compose up -d - Sobe os serviços do docker de forma detached.
+docker-compose up -d --build - Sobe os serviços do docker buildando as imagens que estão declaradas no yml.
+docker exec -it alura-books-1 ping node2- executa o comando ping node2 dentro do container alura-books-1
+
+
+********************** KUBERNETES ********************** 
+sudo snap install minikube
+para testar o kubernetes localmente usa-se o minikube
+para rodar o cluster usa-se minikube start
+para parar o cluster: minikube stop
+para limpar e apagar: minikube delete
+minikube usar alguma virtualização por baixo dos panos como virtualbox ou vmware
+para controlar o cluster usa-se kubectl
+o menor objeto de deploy é o Pod
+um Pod é o objeto que define como rodar o container (image, network, volumes, ports)
+um Pod sozinho não garante o estado desejado
+o comando kubectl create é usado para criar um Pod ou Deployment no cluster
+o Deployment se baseia no Pod e garante o estado desejado
+para receber infos sobre os Pods ou Deployments usamos kubectl get pods ou kubectl get deployments
+o comando kubectl describe pods mostrar vários detalhes sobre os pods como o endereço IP
+o comando minikube dashboard mostra o dashboard do nosso cluster
+podemos escalar o quantidade de Pods facilmente pelo dashboard
+cada Pod possui o seu IP
+o objeto Service abstrai o acesso ao Deployment
+o Service funciona como um balanceador de carga entre os Pods
+o Service é definido separadamente
+o Service "selecione" os Pods através do elemento selector
+para descobrir a IP e a porta do serviço tem o comando: minikube service service-aplicacao --url
+
+kubectl create -f "nome_arquivo" cria o objeto de acordo com o tipo dentro do arquivo
+kubectl get pods - Exibe os pods (ou deployment ou services ou statefullset)
+kubectl delete pods --all - Deleta todos os pods
+kubectl delete tipo nome_tipo - ex: kubectl delete pod redis-pod" - Deleta o tipo específico
+kubectl describe pods | grep IP - Obtem os ips dos pods
+minikube service servico-aplicacao --url - Obtem o Ip da aplicação com o loadBalancer do service
+
+para pods com images locais
+
+eval $(minikube docker-env) - aponte seu cliente do docker para o daemon do docker de sua máquina:
+imagePullPolicy: IfNotPresent - construa sua imagem e, em seguida, crie os recursos do kubernetes usando o comando kubectl, mas use o seguinte no seu arquivo YAML:
+minikube start --insecure-registry - Se você estiver usando o minkube, pode passar um sinalizador na primeira vez que estiver criando a máquina do minikube.
+***** realiza o undo do primeiro comando eval()*****
+unset DOCKER_HOST
+unset DOCKER_TLS_VERIFY
+unset DOCKER_CERT_PATH
+
+
+***********EXEMPLOS DE DOCKER images **************
+----IMAGEM UBUNTU----
+FROM ubuntu - Pegando a imagem
+COPY teste.txt /home - copiando o arquivo da raiz para a pasta home da imagem
+WORKDIR /home - atribuindo a unidade de trabalhando como a pasta home
+RUN cat teste.txt - olhando o conteudo do arquivo copiado 
+COPY teste2.txt ./ - copiando o arquivo da raiz para a pasta raiz (workdir)
+RUN cat teste2.txt - olhando o conteudo do arquivo copiado 
+
+
+********************** IMAGEM de desenvolvimento .NET CORE ********************** 
+
+FROM mcr.microsoft.com/dotnet/core/sdk:2.1-stretch AS build-env - Pegando a imagem strecht e colocando a tag na imagem para build-env
+RUN mkdir /app - CRIA UMA PASTA CHAMADA DE APP
+WORKDIR /app - atribuindo a unidade de trabalhando como a pasta app
+COPY Hackathon.sln ./ - copiando a solution 
+COPY src/HackatonBtp.WebApi/*.csproj ./src/HackatonBtp.WebApi/ - copiando o arquivo de projeto para a pasta de unidade de trabalho
+COPY src/HackathonBtp.Domain/*.csproj ./src/HackathonBtp.Domain/  - copiando o arquivo de projeto para a pasta de unidade de trabalho
+COPY src/HackathonBtp.Data/*.csproj ./src/HackathonBtp.Data/ - copiando o arquivo de projeto para a pasta de unidade de trabalho
+COPY src/HackathonBtp.AzureFunctions/*.csproj ./src/HackathonBtp.AzureFunctions/  - copiando o arquivo de projeto para a pasta de unidade de trabalho
+COPY src/HackathonBtp.Application/*.csproj ./src/HackathonBtp.Application/ - copiando o arquivo de projeto para a pasta de unidade de trabalho
+RUN dotnet restore - efetuando o restore dos pacotes adicionados via nugets
+COPY . ./ - copiando os demais arquivos da raiz para a pasta de trabalho para gerar o publish 
+RUN dotnet publish -c Debug -o out - efetuando o publish da solution e gerando os arquivos na pasta out dentro da pasta de unidade de trabalho
+ --- aqui já é outra imagem, basta apenas pular uma linha se for no mesmo arquivo ---
+
+FROM microsoft/dotnet:2.1.1-aspnetcore-runtime
+RUN mkdir /app
+WORKDIR /app
+COPY --from=build-env /app/src/HackathonBtp.Application/out/ ./HackathonBtp.Application/out/ --copiando o conteúdo gerado na imagem build-env (alias da imagem anterior), para a pasta de trabalho
+COPY --from=build-env /app/src/HackathonBtp.Data/out/ ./HackathonBtp.Data/out/ --copiando o conteúdo gerado na imagem build-env (alias da imagem anterior), para a pasta de trabalho
+COPY --from=build-env /app/src/HackathonBtp.Domain/out/ ./HackathonBtp.Domain/out/ --copiando o conteúdo gerado na imagem build-env (alias da imagem anterior), para a pasta de trabalho
+COPY --from=build-env /app/src/HackathonBtp.AzureFunctions/out/ ./HackathonBtp.AzureFunctions/out/ --copiando o conteúdo gerado na imagem build-env (alias da imagem anterior), para a pasta de trabalho
+COPY --from=build-env /app/src/HackatonBtp.WebApi/out/ ./HackatonBtp.WebApi/out/ --copiando o conteúdo gerado na imagem build-env (alias da imagem anterior), para a pasta de trabalho
