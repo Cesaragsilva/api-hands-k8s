@@ -1,0 +1,50 @@
+language: en-US
+
+instructions:
+  - "Follow the C# coding conventions outlined in the official Microsoft guidelines."
+  - "Ensure proper use of async/await for asynchronous code."
+  - "Avoid using magic strings; use constants or enums instead."
+  - "Favor dependency injection for better testability."
+  - "Code should be readable and self-documenting. Comments should explain why, not what."
+  - "When handling exceptions, prefer specific exception types over general ones like 'Exception'."
+  - "Use 'var' when the type is obvious from the right side of the assignment."
+
+rules:
+  enforce:
+    - "Methods should not exceed 50 lines of code."
+    - "Classes should have a single responsibility."
+    - "Use appropriate access modifiers for classes, methods, and properties."
+    - "Always initialize fields explicitly, avoid leaving them uninitialized."
+    - "Limit the use of 'public' access modifier, favor 'private' or 'protected' unless necessary."
+    - "Use PascalCase for class names and method names, camelCase for local variables and method parameters."
+    - "Limit nested logic. Break down methods with too many nested blocks."
+    - "Always use 'is null' or 'is not null' when checking for null values instead of '== null'."
+
+formatting:
+  - "Use 4 spaces for indentation."
+  - "Ensure that the file ends with a single blank line."
+  - "Braces should always be on the same line as the method declaration or control structure."
+  - "Add a blank line between methods to improve readability."
+  - "Avoid trailing whitespaces."
+  - "For multiline statements, align continuation lines for better clarity."
+
+performance:
+  - "Avoid unnecessary LINQ queries in performance-critical sections of the code."
+  - "Use StringBuilder for string concatenation inside loops."
+  - "Favor lazy loading (e.g., 'Lazy<T>') when dealing with large objects or expensive operations."
+
+security:
+  - "Always validate user input to avoid SQL injection, XSS, or other injection attacks."
+  - "Do not store sensitive data like passwords in plain text. Use proper hashing algorithms (e.g., SHA256 with salt)."
+  - "Ensure secure communication (use HTTPS for APIs)."
+  - "Handle exceptions securely: don't expose stack traces or internal details to end-users."
+
+test_coverage:
+  - "Ensure at least 80% test coverage for business logic."
+  - "Test edge cases and error handling scenarios."
+  - "Favor unit testing with mock objects, avoid testing internal implementation details."
+  - "Tests should be fast, reliable, and deterministic."
+
+approvals:
+  auto_approve: false
+  required_reviews: 1
