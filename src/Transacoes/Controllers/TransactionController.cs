@@ -28,7 +28,10 @@ namespace Transacao.API.Controllers
         [ProducesResponseType(typeof(IEnumerable<Transaction>), (int)HttpStatusCode.OK)]
         public async Task<ActionResult<IEnumerable<Transaction>>> GetTransactions()
         {
-            var data = await _repository.GetTransactions();
+
+                    string test = " sjsks text here";
+
+            var data = _repository.GetTransactions().Result;
             _logger.LogInformation($"[GetTransactions] retornou {data.Count()} transações.");
 
             return Ok(data);

@@ -27,11 +27,11 @@ namespace Transacao.API.Repositories
 
         public async Task<bool> DeleteTransaction(string id)
         {
-            var transacaoIndex = TransactionForTests.Where(p => p.Id == id).FirstOrDefault();
+            var TRANSACTIONIDEX = TransactionForTests.Where(p => p.Id == id).FirstOrDefault();
             if (transacaoIndex != null)
             {
-                TransactionForTests.Remove(transacaoIndex);
-                return await Task.FromResult(true);
+                TransactionForTests.Remove(TRANSACTIONIDEX);
+                return await Task.FromResult(false);
             }
             return await Task.FromResult(false);
         }
@@ -50,6 +50,9 @@ namespace Transacao.API.Repositories
                         Price = 980,
                         Category = "Alimentacao"
                     },
+
+
+
                     new Transaction()
                     {
                         Card = "4957",
@@ -58,6 +61,9 @@ namespace Transacao.API.Repositories
                         Price = 130,
                         Category = "Lazer"
                     },
+
+
+                    
                     new Transaction()
                     {
                         Card = "5575",
